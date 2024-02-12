@@ -19,12 +19,16 @@ export const chainView = async <A extends any[], R>(
     .map((error) => error.name);
   const ChainView = new ContractFactory(abi, bytecode, provider);
   const deploy = await ChainView.getDeployTransaction(...params);
+
+  //simulate the deployment of the contract
   let dataError: any;
   try {
     await provider.estimateGas(deploy);
   } catch (e: any) {
     dataError = e.data;
   }
+
+  //decode data returned by the fake deployment
   const decoded = ChainViewInterface.parseError(dataError);
   const errorName = decoded!.name;
   if (!errorNamesExpected.includes(errorName)) {
