@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 This change log is manually updated.
 
+# ChainView/v1.1.0 2024-02-24
+
+- add write simulation mode with options "from" et "value" ([86e4fa7](https://github.com/Cvg-Finance/ChainView/commit/86e4fa7884e0c390161388e3b05ac0d04a845878))
+- use only rpc url instead of JsonRpcProvider from ethers ([86e4fa7](https://github.com/Cvg-Finance/ChainView/commit/86e4fa7884e0c390161388e3b05ac0d04a845878))
+- compilation build only contracts artifacts and exclude interfaces ([86e4fa7](https://github.com/Cvg-Finance/ChainView/commit/86e4fa7884e0c390161388e3b05ac0d04a845878))
+
 # ChainView/v1.0.3
 
 - test versioning ([4fe2d77](https://github.com/Cvg-Finance/ChainView/commit/4fe2d7744d0a6f5a340689f45f45fae2ac03edb8))
