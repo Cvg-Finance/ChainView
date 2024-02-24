@@ -6,19 +6,31 @@ import {
   ContractMethodArgs,
   BytesLike,
   Fragment,
+  ZeroAddress,
 } from "ethers";
 export const chainView = async <A extends any[], R>(
   abi: InterfaceAbi,
   bytecode: BytesLike,
   params: ContractMethodArgs<A>,
-  provider: JsonRpcProvider
+  providerUrl: string,
+  options: { from?: string; value?: bigint } = {}
 ): Promise<R> => {
+  //set provider with providerUrl
+  const provider = new JsonRpcProvider(providerUrl);
+
+  //default options values
+  const { from = ZeroAddress, value = 0n } = options;
+
   const ChainViewInterface = new Interface(abi);
   const errorNamesExpected = ChainViewInterface.fragments
     .filter((f): f is Fragment & { name: string } => f.type === "error")
     .map((error) => error.name);
   const ChainView = new ContractFactory(abi, bytecode, provider);
+
+  //get deploy data transaction
   const deploy = await ChainView.getDeployTransaction(...params);
+  deploy.from = options.from;
+  deploy.value = options.value;
 
   //simulate the deployment of the contract
   let dataError: any;

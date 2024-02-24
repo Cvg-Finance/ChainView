@@ -2,11 +2,9 @@ import chai from "chai";
 import chaiAsPromised from "chai-as-promised";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
-import { JsonRpcProvider } from "ethers";
 import { chainView } from "../src/chainview";
 import artifactExample from "./Univ2FactoryInfo.json";
 const RPC_URL: string = "https://rpc.ankr.com/eth";
-const providerMainnet = new JsonRpcProvider(RPC_URL);
 
 type ParamCall = [number, number];
 type Univ2FactoryInfo = {
@@ -27,7 +25,7 @@ describe("Chainview tests", () => {
     const [chainviewResponse] = await chainView<
       ParamCall,
       Univ2FactoryInfo[][]
-    >(artifactExample.abi, artifactExample.bytecode, params, providerMainnet);
+    >(artifactExample.abi, artifactExample.bytecode, params, RPC_URL);
     const pairInfo = chainviewResponse[0];
     expect(pairInfo.pair).to.be.equal(
       "0x3139Ffc91B99aa94DA8A2dc13f1fC36F9BDc98eE"
@@ -53,7 +51,7 @@ describe("Chainview tests", () => {
         artifactExample.abi,
         artifactExample.bytecode,
         params,
-        providerMainnet
+        RPC_URL
       )
     ).to.eventually.be.rejectedWith(
       `ChainView Error: Panic with arg 17 at selector 0x4e487b71`

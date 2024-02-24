@@ -1,8 +1,6 @@
-import { JsonRpcProvider } from "ethers";
 import { chainView } from "../../src/chainview";
 import artifactExample from "../chainviewArtifacts/ERC721EnumerableInfo.json";
 const RPC_URL: string = "https://rpc.ankr.com/eth";
-const provider = new JsonRpcProvider(RPC_URL);
 
 type ParamCall = [string];
 type ERC721EnumerableInfo = bigint[];
@@ -13,7 +11,7 @@ async function main() {
   const [chainViewResponse] = await chainView<
     ParamCall,
     ERC721EnumerableInfo[]
-  >(artifactExample.abi, artifactExample.bytecode, params, provider);
+  >(artifactExample.abi, artifactExample.bytecode, params, RPC_URL);
   console.log(`TokenIds for ${holder}: ${chainViewResponse}`);
 }
 
