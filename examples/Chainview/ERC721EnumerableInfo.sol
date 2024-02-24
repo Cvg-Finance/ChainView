@@ -25,3 +25,4 @@ contract ERC721EnumerableInfo {
         revert ERC721EnumerableInfoError(tokenIds);
     }
 }
+

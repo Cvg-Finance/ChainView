@@ -1,8 +1,6 @@
-const { JsonRpcProvider } = require("ethers");
 const { chainView } = require("../../dist/src/chainview");
 const artifactExample = require("../chainviewArtifacts/Univ2FactoryInfo.json");
 const RPC_URL = "https://rpc.ankr.com/eth";
-const provider = new JsonRpcProvider(RPC_URL);
 
 async function main() {
   const from = 1;
@@ -12,7 +10,7 @@ async function main() {
     artifactExample.abi,
     artifactExample.bytecode,
     params,
-    provider
+    RPC_URL
   );
 
   for (const pairInfo of chainViewResponse) {

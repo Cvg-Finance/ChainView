@@ -18,51 +18,61 @@ const solFiles = fs
 
 if (solFiles.length === 0) {
   console.log("Chainview: nothing to compile");
-} else {
-  solFiles.forEach((file) => {
-    if (path.extname(file) === ".sol") {
-      const contractPath = path.join(contractsDir, file);
-      const contractSource = fs.readFileSync(contractPath, "utf8");
+  process.exit(0);
+}
+let counter = 0;
 
-      const input = {
-        language: "Solidity",
-        sources: {
-          [file]: {
-            content: contractSource,
+solFiles.forEach((file) => {
+  if (path.extname(file) === ".sol") {
+    const contractPath = path.join(contractsDir, file);
+    const contractSource = fs.readFileSync(contractPath, "utf8");
+
+    const input = {
+      language: "Solidity",
+      sources: {
+        [file]: {
+          content: contractSource,
+        },
+      },
+      settings: {
+        outputSelection: {
+          "*": {
+            "*": ["abi", "evm.bytecode.object"],
           },
         },
-        settings: {
-          outputSelection: {
-            "*": {
-              "*": ["abi", "evm.bytecode.object"],
-            },
-          },
-        },
-      };
+      },
+    };
 
-      const output = JSON.parse(solc.compile(JSON.stringify(input)));
-      if (output.errors) {
-        console.log("ERROR", output.errors);
-        return output.errors;
-      }
-
-      for (const contractName in output.contracts[file]) {
-        const contract = output.contracts[file][contractName];
-        const contractOutput = {
-          abi: contract.abi,
-          bytecode: contract.evm.bytecode.object,
-        };
-
-        const outputFilename = `${contractName.replace(":", "")}.json`;
-        if (!fs.existsSync(artifactsDir)) {
-          fs.mkdirSync(artifactsDir);
+    const output = JSON.parse(solc.compile(JSON.stringify(input)));
+    if (output.errors) {
+      for (const error of output.errors) {
+        console.error(error.formattedMessage);
+        if (error.severity == "error") {
+          console.log("ChainView: Compilation Failed");
+          process.exit(1);
         }
-        fs.writeFileSync(
-          path.join(artifactsDir, outputFilename),
-          JSON.stringify(contractOutput, null, 2)
-        );
-        console.log(`Compiled ${contractName} to ${outputFilename}`);
       }
     }
-  });
-}
+    //extract only the contract itself (exclude interfaces)
+    const keyNames = Object.keys(output.contracts[file]);
+    const primaryContractName = keyNames[0];
+    const contract = output.contracts[file][primaryContractName];
+    const contractOutput = {
+      abi: contract.abi,
+      bytecode: contract.evm.bytecode.object,
+    };
+
+    const outputFilename = `${primaryContractName.replace(":", "")}.json`;
+    if (!fs.existsSync(artifactsDir)) {
+      fs.mkdirSync(artifactsDir);
+    }
+    fs.writeFileSync(
+      path.join(artifactsDir, outputFilename),
+      JSON.stringify(contractOutput, null, 4)
+    );
+    counter++;
+  }
+});
+console.log(`ChainView: Compiled ${counter} Solidity files successfully !\n`);
+
+process.exit(0);

@@ -1,8 +1,6 @@
-import { JsonRpcProvider } from "ethers";
 import { chainView } from "../../src/chainview";
 import artifactExample from "../chainviewArtifacts/Univ2FactoryInfo.json";
 const RPC_URL: string = "https://rpc.ankr.com/eth";
-const provider = new JsonRpcProvider(RPC_URL);
 
 type ParamCall = [number, number];
 type Univ2FactoryInfo = {
@@ -23,7 +21,7 @@ async function main() {
     artifactExample.abi,
     artifactExample.bytecode,
     params,
-    provider
+    RPC_URL
   );
 
   for (const pairInfo of chainViewResponse) {
