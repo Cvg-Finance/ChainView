@@ -18,9 +18,6 @@ export const chainView = async <A extends any[], R>(
   //set provider with providerUrl
   const provider = new JsonRpcProvider(providerUrl);
 
-  //default options values
-  const { from = ZeroAddress, value = 0n } = options;
-
   const ChainViewInterface = new Interface(abi);
   const errorNamesExpected = ChainViewInterface.fragments
     .filter((f): f is Fragment & { name: string } => f.type === "error")
@@ -29,8 +26,8 @@ export const chainView = async <A extends any[], R>(
 
   //get deploy data transaction
   const deploy = await ChainView.getDeployTransaction(...params);
-  deploy.from = options.from;
-  deploy.value = options.value;
+  deploy.from = options.from || ZeroAddress;
+  deploy.value = options.value || 0n;
 
   //simulate the deployment of the contract
   let dataError: any;

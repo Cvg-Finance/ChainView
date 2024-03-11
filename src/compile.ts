@@ -3,6 +3,19 @@
 import * as path from "path";
 import * as fs from "fs";
 import solc from "solc";
+interface SolcOutput {
+  contracts: {
+    [key: string]: {
+      [key: string]: {
+        abi: any[];
+        evm: {
+          bytecode: { object: string };
+        };
+      };
+    };
+  };
+  errors?: { formattedMessage: string; severity: string }[];
+}
 
 const rootDir = process.cwd();
 const contractsDir = path.join(rootDir, "Chainview");
@@ -43,7 +56,7 @@ solFiles.forEach((file) => {
       },
     };
 
-    const output = JSON.parse(solc.compile(JSON.stringify(input)));
+    const output: SolcOutput = JSON.parse(solc.compile(JSON.stringify(input)));
     if (output.errors) {
       for (const error of output.errors) {
         console.error(error.formattedMessage);
@@ -53,24 +66,27 @@ solFiles.forEach((file) => {
         }
       }
     }
-    //extract only the contract itself (exclude interfaces)
-    const keyNames = Object.keys(output.contracts[file]);
-    const primaryContractName = keyNames[0];
-    const contract = output.contracts[file][primaryContractName];
-    const contractOutput = {
-      abi: contract.abi,
-      bytecode: contract.evm.bytecode.object,
-    };
+    Object.entries(output.contracts[file]).forEach(
+      ([contractName, contractDetails]) => {
+        if (contractDetails.evm.bytecode.object !== "") {
+          const artifactPath = path.join(artifactsDir, `${contractName}.json`);
+          const contractOutput = {
+            abi: contractDetails.abi,
+            bytecode: contractDetails.evm.bytecode.object,
+          };
 
-    const outputFilename = `${primaryContractName.replace(":", "")}.json`;
-    if (!fs.existsSync(artifactsDir)) {
-      fs.mkdirSync(artifactsDir);
-    }
-    fs.writeFileSync(
-      path.join(artifactsDir, outputFilename),
-      JSON.stringify(contractOutput, null, 4)
+          if (!fs.existsSync(artifactsDir)) {
+            fs.mkdirSync(artifactsDir);
+          }
+
+          fs.writeFileSync(
+            artifactPath,
+            JSON.stringify(contractOutput, null, 4)
+          );
+          counter++;
+        }
+      }
     );
-    counter++;
   }
 });
 console.log(`ChainView: Compiled ${counter} Solidity files successfully !\n`);
