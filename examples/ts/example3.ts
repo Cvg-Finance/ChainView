@@ -1,4 +1,4 @@
-import { parseEther } from "ethers";
+import { parseEther, formatEther } from "ethers";
 import { chainView } from "../../src/chainview";
 import artifactExample from "../chainviewArtifacts/EthInfo.json";
 const RPC_URL: string = "https://rpc.ankr.com/eth";
@@ -34,8 +34,10 @@ async function main() {
     RPC_URL,
     options
   );
-  console.log(`Balance before: ${chainViewResponse.balBefore}`);
-  console.log(`Balance after: ${chainViewResponse.balAfter}`);
+  console.log(
+    `Balance before: ${formatEther(chainViewResponse.balBefore)} ETH`
+  );
+  console.log(`Balance after: ${formatEther(chainViewResponse.balAfter)} ETH`);
 }
 
 main();

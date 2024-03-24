@@ -7,13 +7,14 @@ import {
   BytesLike,
   Fragment,
   ZeroAddress,
+  BigNumberish,
 } from "ethers";
 export const chainView = async <A extends any[], R>(
   abi: InterfaceAbi,
   bytecode: BytesLike,
   params: ContractMethodArgs<A>,
   providerUrl: string,
-  options: { from?: string; value?: bigint } = {}
+  options: { from?: string; value?: bigint; blockTag?: BigNumberish } = {}
 ): Promise<R> => {
   //set provider with providerUrl
   const provider = new JsonRpcProvider(providerUrl);
@@ -28,11 +29,14 @@ export const chainView = async <A extends any[], R>(
   const deploy = await ChainView.getDeployTransaction(...params);
   deploy.from = options.from || ZeroAddress;
   deploy.value = options.value || 0n;
+  if (options.blockTag) {
+    deploy.blockTag = options.blockTag;
+  }
 
   //simulate the deployment of the contract
   let dataError: any;
   try {
-    await provider.estimateGas(deploy);
+    await provider.call(deploy);
   } catch (e: any) {
     dataError = e.data;
   }

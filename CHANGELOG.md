@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 This change log is manually updated.
 
+# ChainView/v1.1.1
+
+- fix compiler ([b632dfc](https://github.com/Cvg-Finance/ChainView/commit/b632dfc16be35c93388311a472c0a57fee612144))
+
 # ChainView/v1.1.0 2024-02-24
 
 - add write simulation mode with options "from" et "value" ([86e4fa7](https://github.com/Cvg-Finance/ChainView/commit/86e4fa7884e0c390161388e3b05ac0d04a845878))
