@@ -76,6 +76,24 @@ You want to simulate a transaction by sending ethers and returning some informat
 If you want to do it from the classic way, it's not possible. You can only if you fork the mainnet and do some actions.
 With ChainView, you are able to simulate any onchain action by sending ETH to your ChainView contract.
 
+### Example 4
+
+You want to get totalSupply of CVG token in a past block:
+
+1. You add the pinned block in the options
+2. Then you call ChainView
+3. You get you totalSupply in the past
+4. You verify the blockNumber returned to check if the snapshot is well done
+
+### Example 5
+
+You want to get a list of holder of veCVG in a past block:
+
+1. You add the pinned block in the options
+2. Then you call ChainView
+3. You get you the list of holder + other informations related to the tokenIds
+4. You verify the blockNumber returned to check if the snapshot is well done
+
 # Medium Article
 
 https://medium.com/@r3vert/chainview-a-new-web3-tool-8184883d27c0
